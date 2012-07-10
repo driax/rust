@@ -3711,10 +3711,9 @@ fn trans_expr(bcx: block, e: @ast::expr, dest: dest) -> block {
             let voidval = PointerCast(bcx, ptr_ptr_val, T_ptr(llvoid_ty));
             #debug["voidval = %s", val_str(ccx.tn, voidval)];
 
-            let mut static_ti = none;
-            let lltydesc = get_tydesc(ccx, expr_ty(bcx, val), static_ti);
-            lazily_emit_all_tydesc_glue(ccx, copy static_ti);
-            let lltydesc = PointerCast(bcx, lltydesc, llvoid_ty);
+            let static_ti = get_tydesc(ccx, expr_ty(bcx, val));
+            lazily_emit_all_tydesc_glue(ccx, static_ti);
+            let lltydesc = PointerCast(bcx, static_ti.tydesc, llvoid_ty);
 
             let origin = bcx.ccx().maps.method_map.get(alloc_id);
             let bcx = trans_call_inner(
